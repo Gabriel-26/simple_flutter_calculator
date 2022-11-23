@@ -46,12 +46,14 @@ class _CalculatorState extends State<Calculator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text(
-                    text,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.white, fontSize: 80),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.white, fontSize: 55),
+                    ),
                   ),
                 ),
               ],
@@ -99,23 +101,8 @@ class _CalculatorState extends State<Calculator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(28, 12, 90, 12),
-                    child: Text(
-                      "0",
-                      style: TextStyle(
-                        fontSize: 35,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    shape: StadiumBorder(),
-                    primary: (Colors.grey[850])!,
-                  ),
-                ),
+                numButton("00", (Colors.grey[850])!, Colors.white),
+                numButton("0", (Colors.grey[850])!, Colors.white),
                 numButton(".", (Colors.grey[850])!, Colors.white),
                 numButton("=", Colors.orange, Colors.white),
               ],
