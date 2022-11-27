@@ -1,34 +1,38 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
+import 'package:gradient_widgets/gradient_widgets.dart';
+
+
+
+String strInput = "";
+final textControllerInput = TextEditingController();
+final textControllerResult = TextEditingController();
 
 class Calculator extends StatefulWidget {
   const Calculator({Key? key}) : super(key: key);
 
+
   @override
   State<Calculator> createState() => _CalculatorState();
+
 }
 
 class _CalculatorState extends State<Calculator> {
-  Widget numButton(String btnText, Color btnColor, Color txtColor) {
-    return ElevatedButton(
-      onPressed: () {
-        calculate(btnText);
-      },
-      child: Text(
-        btnText,
-        style: TextStyle(
-          fontSize: 25,
-          color: txtColor,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        fixedSize: Size(70, 70),
-        shape: CircleBorder(),
-        primary: btnColor,
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    textControllerInput.addListener(() {});
+    textControllerResult.addListener(() {});
   }
+  @override
+  void dispose() {
+    textControllerInput.dispose();
+    textControllerResult.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,31 +42,65 @@ class _CalculatorState extends State<Calculator> {
         title: Text("Calculator"),
         backgroundColor: Colors.black,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      text,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 55),
-                    ),
-                  ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+           Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child:  TextField(
+                decoration:  InputDecoration.collapsed(
+                    hintText: "0",
+                    hintStyle: TextStyle(
+                      fontSize: 30,
+                      fontFamily: 'RobotoMono',
+
+                    )),
+                style: TextStyle(
+                  fontSize: 30,
+                  fontFamily: 'RobotoMono',
+                  color: Colors.white,
                 ),
-              ],
-            ),
+                textAlign: TextAlign.right,
+                controller: textControllerInput,
+                onTap: () =>
+                    FocusScope.of(context).requestFocus( FocusNode()),
+              )),
+           Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                decoration:  InputDecoration.collapsed(
+                    hintText: "Result",
+                    // fillColor: Colors.deepPurpleAccent,
+                    hintStyle: TextStyle(fontFamily: 'RobotoMono')),
+                textInputAction: TextInputAction.none,
+                keyboardType: TextInputType.number,
+                style: TextStyle(
+                    fontSize: 32,
+                    fontFamily: 'RobotoMono',
+                    fontWeight: FontWeight.bold
+                  // color: Colors.deepPurpleAccent
+                ),
+                textAlign: TextAlign.right,
+                controller: textControllerResult,
+                onTap: () {
+                  FocusScope.of(context).requestFocus( FocusNode());
+                  // ClipboardManager.copyToClipBoard(textControllerResult.text).then((result) {
+                  //   Fluttertoast.showToast(
+                  //       msg: "Value copied to clipboard!",
+                  //       toastLength: Toast.LENGTH_SHORT,
+                  //       gravity: ToastGravity.CENTER,
+                  //       timeInSecForIos: 1,
+                  //       backgroundColor: Colors.blueAccent,
+                  //       textColor: Colors.white,
+                  //       fontSize: 16.0
+                  //   );
+                  // });
+                },)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                numButton("C", Colors.grey, Colors.black),
-                numButton("+/-", Colors.grey, Colors.black),
+                btnAC("AC", Colors.grey, Colors.black),
+                btnClear("=>", Colors.grey, Colors.black),
                 numButton("%", Colors.grey, Colors.black),
                 numButton("/", Colors.orange, Colors.white),
               ],
@@ -74,7 +112,7 @@ class _CalculatorState extends State<Calculator> {
                 numButton("7", (Colors.grey[850])!, Colors.white),
                 numButton("8", (Colors.grey[850])!, Colors.white),
                 numButton("9", (Colors.grey[850])!, Colors.white),
-                numButton("x", Colors.orange, Colors.white),
+                numButton("*", Colors.orange, Colors.white),
               ],
             ),
             SizedBox(height: 10),
@@ -104,55 +142,101 @@ class _CalculatorState extends State<Calculator> {
                 numButton("00", (Colors.grey[850])!, Colors.white),
                 numButton("0", (Colors.grey[850])!, Colors.white),
                 numButton(".", (Colors.grey[850])!, Colors.white),
-                numButton("=", Colors.orange, Colors.white),
+                btnEqual("=", Colors.orange, Colors.white),
               ],
             ),
             SizedBox(height: 10),
           ],
         ),
+      );
+  }
+
+  Widget numButton( String btntext, btnColor, txtColor) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          textControllerInput.text = textControllerInput.text + btntext;
+        });      },
+      style: ElevatedButton.styleFrom(
+        fixedSize: Size(70, 70), backgroundColor: btnColor,
+        shape: CircleBorder(),
+      ),
+      child: Text(
+        btntext,
+        style: TextStyle(
+          fontSize: 25,
+          color: txtColor,
+        ),
+      ),
+    );
+  }
+  Widget btnAC(btntext, Color btnColor, txtColor) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            textControllerInput.text = "";
+            textControllerResult.text = "";
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          fixedSize: Size(70, 70), backgroundColor: btnColor,
+          shape: CircleBorder(),
+        ),
+        child: Text(
+          btntext,
+          style: TextStyle(
+              fontSize: 28.0, color: txtColor, fontFamily: 'RobotoMono'),
+        ),
       ),
     );
   }
 
-  // Logic
-  int firstNumber = 0;
-  int secondNumber = 0;
-  String result = "";
-  String text = "";
-  String operation = "";
-
-  void calculate(String btnText) {
-    if (btnText == "C") {
-      result = "";
-      text = "";
-      firstNumber = 0;
-      secondNumber = 0;
-    } else if (btnText == "+" ||
-        btnText == "-" ||
-        btnText == "x" ||
-        btnText == "/") {
-      firstNumber = int.parse(text);
-      result = "";
-      operation = btnText;
-    } else if (btnText == "=") {
-      secondNumber = int.parse(text);
-      if (operation == "+") {
-        result = (firstNumber + secondNumber).toString();
-      }
-      if (operation == "-") {
-        result = (firstNumber - secondNumber).toString();
-      }
-      if (operation == "x") {
-        result = (firstNumber * secondNumber).toString();
-      }
-      if (operation == "/") {
-        result = (firstNumber ~/ secondNumber).toString();
-      }
-    } else {
-      result = int.parse(text + btnText).toString();
-    }
-    setState(() {
-      text = result;
-    });
+  Widget btnClear( String btntext, btnColor, txtColor) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 5.0),
+      child: TextButton(
+        onPressed: () {
+          textControllerInput.text = (textControllerInput.text.length > 0)
+              ? (textControllerInput.text
+              .substring(0, textControllerInput.text.length - 1))
+              : "";
+        },
+    style: TextButton.styleFrom(
+    fixedSize: Size(70, 70), backgroundColor: btnColor,
+    shape: CircleBorder(),
+      ),
+        child: Text(btntext,
+        style: TextStyle(
+            fontSize: 25, color: txtColor
+        ),),
+      )
+    );
   }
+
+  Widget btnEqual(btnText, btnColor, txtColor) {
+    return ElevatedButton(
+        onPressed: () {
+    //Calculate everything here
+    // Parse expression:
+    Parser p = Parser();
+    // Bind variables:
+    ContextModel cm = ContextModel();
+    Expression exp = p.parse(textControllerInput.text);
+    setState(() {
+      textControllerInput.text  =  exp.evaluate(EvaluationType.REAL, cm).toString();
+
+    });
+    },
+      style: ElevatedButton.styleFrom(
+        fixedSize: Size(70, 70), backgroundColor: btnColor,
+        shape: CircleBorder(),
+      ),
+        child: Text(
+        btnText,
+        style: TextStyle(fontSize: 35.0, color: txtColor),
+    ),
+  );
+}
 }
